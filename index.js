@@ -12,7 +12,10 @@ document.addEventListener("click", function (e) {
     handleReplyBack(e.target.dataset.replyBack);
   } else if (e.target.id === "tweet-btn") {
     handleTweetBtnClick();
+  } else if (e.target.dataset.deleteTweet) {
+    handleDeleteTweet(e.target.dataset.deleteTweet);
   }
+  console.log(e.target.dataset);
 });
 
 function handleLikeClick(tweetId) {
@@ -83,6 +86,16 @@ function handleTweetBtnClick() {
   }
 }
 
+function handleDeleteTweet(tweetId) {
+  const indexToRemove = tweetsData.findIndex((tweet) => tweet.uuid === tweetId);
+
+  if (indexToRemove !== -1) {
+    tweetsData.splice(indexToRemove, 1);
+  }
+  console.log(tweetsData);
+  render();
+}
+
 function getFeedHtml() {
   let feedHtml = ``;
 
@@ -116,6 +129,13 @@ function getFeedHtml() {
 `;
       });
     }
+    let deleteTweetHtml = "";
+    if (tweet.handle === "@Scrimba") {
+      deleteTweetHtml += `
+          <div id='delete-tweet-${tweet.handle}'>
+          <i class="fa-regular fa-circle-xmark" data-delete-tweet='${tweet.uuid}'></i>
+        </div>`;
+    }
 
     feedHtml += `
 <div class="tweet">
@@ -144,7 +164,8 @@ function getFeedHtml() {
                     ${tweet.retweets}
                 </span>
             </div>   
-        </div>            
+        </div>    
+          ${deleteTweetHtml}
     </div>
     <div class="hidden" id="replies-${tweet.uuid}">
         ${repliesHtml}
@@ -156,6 +177,7 @@ function getFeedHtml() {
 </div>
 `;
   });
+
   return feedHtml;
 }
 
